@@ -5,11 +5,34 @@ const Todo = (props) => {
 
   return (
 
-    <div>
+    <div className="todo">
       {props.todo.name}
     </div>
-    
+
   )
+}
+
+class Form extends React.Component {
+
+  state = {
+    value: ''
+  }
+  handleSubmit = () => {
+    this.props.submit(this.state.value)
+  }
+  
+    onChangeText = (e) => {
+      this.setState({
+        value: e.target.value
+      })
+    }
+render () {
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <input type="text" value={this.state.value} placeholder="aggiungi todo" onChange={this.onChangeText} />
+      </form>
+    )
+  }
 }
 
 
@@ -30,6 +53,7 @@ class App extends React.Component {
             {this.state.todos.map((item, index) => {
               <Todo key={index} todo={item} />
             })}
+            <Form />
 
           </div>
         </div>
