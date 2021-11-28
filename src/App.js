@@ -5,8 +5,11 @@ const Todo = (props) => {
 
   return (
 
-    <div className="todo">
+    <div style={{textDecoration: props.todo.completato ? 'line-through': ''}} className="todo">
       {props.todo.name}
+      <div>
+        <button onClick={() => props.completaTodo(props.index)}>completa</button>
+      </div>
     </div>
 
   )
@@ -17,8 +20,21 @@ class Form extends React.Component {
   state = {
     value: ''
   }
-  handleSubmit = () => {
+  handleSubmit = (e) => {
+    e.preventDefault();
+    if (this.state.value.trim() === ""){
+      alert("scrivi qualcosa");
+      return
+        }
+    if (this.state.value.length <= 3){
+      alert("scrivi qualcosa più lungo di 3 caratteri");
+      return
+    }
+    
     this.props.submit(this.state.value)
+    this.setState({
+      value: ''
+    })
   }
   
     onChangeText = (e) => {
@@ -29,7 +45,7 @@ class Form extends React.Component {
 render () {
     return (
       <form onSubmit={this.handleSubmit}>
-        <input type="text" value={this.state.value} placeholder="aggiungi todo" onChange={this.onChangeText} />
+        <input className="input" type="text" value={this.state.value} placeholder="aggiungi todo" onChange={this.onChangeText} />
       </form>
     )
   }
@@ -40,20 +56,36 @@ render () {
 class App extends React.Component {
   state = {
     todos: [
-      { name: 'finire un lavoro', completato: true},
-      { name: 'farsi pagare', completato: true},
-      { name: 'finire un lavoro', completato: true},
+      { name: 'finire un lavoro', completato: false},
+      { name: 'farsi pagare', completato: false},
+      { name: 'finire un lavoro', completato: false},
     ]
   }
+  addTodo = (todo) => {
 
+    const newTodos = [...this.state.todos, { name: todo }]
+    this.setState({
+      todos: newTodos 
+    })
+
+  }
+
+  completaTodo = (index) => {
+
+    const newTodos = [...this.state.todos];
+    newTodos[index].completato = true; 
+    this.setState({
+      todos: newTodos
+    })
+  }
     render() {
       return (
         <div className="app">
           <div className="todo-list">
-            {this.state.todos.map((item, index) => {
-              <Todo key={index} todo={item} />
-            })}
-            <Form />
+            {this.state.todos.map((item, index) => (
+              <Todo key={index} todo={item} index={index} completaTodo={this.completaTodo} />
+            ))}
+            <Form submit={this.addTodo} />
 
           </div>
         </div>
